@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Today's Word | Brix Team</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--soft:#fff7ed;--orange:#f97316;--orange2:#ea580c}
+  html,body{min-height:100%;background:#fff;color:var(--ink);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased}
+  body{background:radial-gradient(circle at 50% 8%,#fff7ed 0,#fff 32%,#fff 100%)}
+  .shell{max-width:1120px;margin:0 auto;padding:56px 24px 64px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:48px}
+  .brand{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;color:#475569;font-size:13px;font-weight:600}
+  .back{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border:1px solid var(--line);border-radius:999px;color:#334155;text-decoration:none;font-size:14px;font-weight:600;background:#fff;transition:.2s}
+  .back:hover{border-color:#cbd5e1;background:#f8fafc;transform:translateY(-1px)}
+  .hero{text-align:center;max-width:760px;margin:0 auto 30px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;color:#c2410c;font-size:13px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:14px}
+  h1{font-size:42px;line-height:1.08;letter-spacing:-.035em;margin-bottom:14px}
+  .subtitle{color:var(--muted);font-size:16px;line-height:1.7;max-width:660px;margin:0 auto}
+  .word-card{max-width:760px;margin:32px auto 0;background:rgba(255,255,255,.96);border:1px solid #fed7aa;border-radius:24px;padding:34px;box-shadow:0 18px 55px rgba(15,23,42,.08),0 2px 8px rgba(249,115,22,.08);position:relative;overflow:hidden}
+  .word-card:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:linear-gradient(90deg,#fb923c,#f97316,#ea580c)}
+  .card-top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
+  .label{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#9a3412}
+  .counter{font-size:12px;color:#94a3b8;background:#f8fafc;border:1px solid var(--line);border-radius:999px;padding:6px 10px}
+  .word{font-size:48px;line-height:1.08;letter-spacing:-.045em;font-weight:800;color:#0f172a;margin-bottom:18px;overflow-wrap:anywhere}
+  .definition{font-size:17px;line-height:1.7;color:#475569;min-height:58px}
+  .divider{height:1px;background:var(--line);margin:30px 0 24px}
+  .prompt{display:flex;gap:12px;align-items:flex-start;color:#64748b;font-size:14px;line-height:1.55}
+  .prompt-icon{width:28px;height:28px;border-radius:9px;background:var(--soft);color:var(--orange2);display:flex;align-items:center;justify-content:center;flex:none;font-weight:800}
+  .actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+  button{font:inherit}
+  .shuffle{border:0;border-radius:13px;padding:13px 18px;background:var(--orange);color:#fff;font-weight:750;cursor:pointer;display:inline-flex;align-items:center;gap:9px;box-shadow:0 8px 18px rgba(249,115,22,.20);transition:.2s}
+  .shuffle:hover{background:var(--orange2);transform:translateY(-1px);box-shadow:0 10px 22px rgba(249,115,22,.24)}
+  .shuffle:active{transform:translateY(0) scale(.985)}
+  .today-btn{border:1px solid var(--line);border-radius:13px;padding:12px 16px;background:#fff;color:#334155;font-weight:650;cursor:pointer;transition:.2s}
+  .today-btn:hover{background:#f8fafc;border-color:#cbd5e1}
+  .note{text-align:center;margin:20px auto 0;color:#94a3b8;font-size:12.5px;line-height:1.5}
+  .footer{margin-top:52px;padding-top:30px;border-top:1px solid var(--line);text-align:center;color:#94a3b8;font-size:14px}
+  .flip{animation:flipIn .38s ease both}
+  @keyframes flipIn{0%{opacity:.15;transform:translateY(8px) scale(.985)}100%{opacity:1;transform:none}}
+  @media (min-width:768px){.shell{padding:72px 32px 84px}h1{font-size:52px}.word-card{padding:40px}.word{font-size:58px}}
+  @media (max-width:560px){.shell{padding:28px 16px 44px}.topbar{margin-bottom:38px}.brand{display:none}.back{font-size:13px}.hero{text-align:left}.eyebrow{margin-bottom:10px}h1{font-size:36px}.subtitle{font-size:15px}.word-card{padding:25px 21px;border-radius:20px}.word{font-size:38px}.definition{font-size:15.5px}.actions{display:grid;grid-template-columns:1fr 1fr}.shuffle,.today-btn{justify-content:center;width:100%}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="brand">Brix Team · Daily Briefing</div>
+    <a class="back" href="index.html" aria-label="Back to Business Metrics">← Back to Metrics</a>
+  </div>
+
+  <div class="hero">
+    <div class="eyebrow">Daily team ritual</div>
+    <h1>Today's Word</h1>
+    <p class="subtitle">Finish the briefing with one idea worth carrying into the shift. Pick the daily word, read its meaning, and give the team one practical example.</p>
+  </div>
+
+  <main class="word-card" id="word-card" aria-live="polite">
+    <div class="card-top">
+      <div class="label">Today's Word</div>
+      <div class="counter">1,200-word deck</div>
+    </div>
+    <div class="word" id="word">—</div>
+    <div class="definition" id="definition">Loading today's word…</div>
+    <div class="divider"></div>
+    <div class="prompt">
+      <div class="prompt-icon">↗</div>
+      <div><strong>Briefing prompt:</strong> How can we show this word in one visible action during today’s shift?</div>
+    </div>
+    <div class="actions">
+      <button class="shuffle" id="shuffle" type="button" aria-label="Shuffle to another word">⟳ Shuffle</button>
+      <button class="today-btn" id="daily" type="button">Today's Pick</button>
+    </div>
+  </main>
+  <div class="note">“Today’s Pick” stays the same for the calendar day. “Shuffle” lets the team choose another word if they want a different one.</div>
+  <div class="footer">Built with ❤️ By Brix Team</div>
+</div>
+<script src="todays-word-data.js"></script>
+<script>
+(function(){
+  const words = Array.isArray(window.TODAYS_WORDS) ? window.TODAYS_WORDS : [];
+  const wordEl = document.getElementById('word');
+  const defEl = document.getElementById('definition');
+  const card = document.getElementById('word-card');
+  const shuffleBtn = document.getElementById('shuffle');
+  const dailyBtn = document.getElementById('daily');
+  let lastIndex = -1;
+
+  function dayIndex(){
+    const d = new Date();
+    const stamp = Number(String(d.getFullYear()) + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0'));
+    // deterministic daily index with a simple integer mix
+    return words.length ? Math.abs((stamp * 2654435761) >>> 0) % words.length : 0;
+  }
+
+  function show(index){
+    if(!words.length){ wordEl.textContent='Word bank unavailable'; defEl.textContent='Please make sure todays-word-data.js is uploaded beside this page.'; return; }
+    lastIndex = index;
+    const item = words[index];
+    wordEl.textContent = item.word;
+    defEl.textContent = item.definition;
+    card.classList.remove('flip');
+    void card.offsetWidth;
+    card.classList.add('flip');
+  }
+
+  function shuffle(){
+    if(words.length < 2) return show(0);
+    let next;
+    do { next = Math.floor(Math.random()*words.length); } while(next===lastIndex);
+    show(next);
+  }
+
+  shuffleBtn.addEventListener('click', shuffle);
+  dailyBtn.addEventListener('click', ()=>show(dayIndex()));
+  show(dayIndex());
+})();
+</script>
+</body>
+</html>
