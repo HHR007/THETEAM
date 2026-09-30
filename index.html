@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Profit & Growth Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: #ffffff; color: #0f172a; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; }
+  a { color: inherit; text-decoration: none; }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type="number"] { -moz-appearance: textfield; }
+
+  .container { max-width: 1120px; margin: 0 auto; padding: 56px 24px 64px; }
+  @media (min-width: 768px) { .container { padding: 80px 32px 96px; } }
+
+  .badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; color: #475569; font-size: 13px; font-weight: 500; }
+  .badge svg { width: 14px; height: 14px; }
+
+  h1 { font-size: 40px; font-weight: 700; letter-spacing: -0.02em; color: #0f172a; margin-bottom: 16px; line-height: 1.15; }
+  @media (min-width: 768px) { h1 { font-size: 48px; } }
+  .subtitle { color: #64748b; font-size: 17px; max-width: 640px; line-height: 1.6; }
+
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; margin: 32px 0 40px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; border: 1px solid #e2e8f0; background: #fff; color: #334155; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .pill:hover, .pill:focus { border-color: #cbd5e1; background: #f8fafc; box-shadow: 0 1px 2px rgba(15,23,42,0.04); outline: none; }
+  .pill svg { width: 16px; height: 16px; }
+
+  .section { margin-bottom: 44px; scroll-margin-top: 24px; }
+  .section-header { padding-left: 16px; border-left: 3px solid; margin-bottom: 20px; }
+  .section-header h2 { font-size: 24px; font-weight: 600; color: #0f172a; letter-spacing: -0.01em; }
+  @media (min-width: 768px) { .section-header h2 { font-size: 26px; } }
+  .section-header p { color: #64748b; font-size: 15px; margin-top: 4px; }
+
+  .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+  @media (min-width: 1024px) { .grid { grid-template-columns: 1fr 1fr; } }
+
+  .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 24px; box-shadow: 0 1px 2px rgba(15,23,42,0.04); transition: box-shadow 0.2s ease; }
+  @media (min-width: 768px) { .card { padding: 28px; } }
+  .card:hover { box-shadow: 0 4px 16px rgba(15,23,42,0.06); }
+
+  .field { margin-bottom: 20px; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 13px; font-weight: 500; color: #334155; margin-bottom: 8px; }
+  .input-wrap { display: flex; align-items: center; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; overflow: hidden; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+  .input-wrap:focus-within { border-color: #94a3b8; box-shadow: 0 0 0 2px #f1f5f9; }
+  .input-wrap .prefix { padding: 0 8px 0 14px; font-size: 13px; font-weight: 500; color: #94a3b8; user-select: none; }
+  .input-wrap .divider { width: 1px; height: 20px; background: #e2e8f0; }
+  .input-wrap input { flex: 1; border: 0; outline: 0; padding: 12px 14px; background: transparent; font-size: 15px; color: #0f172a; font-family: inherit; }
+  .input-wrap input::placeholder { color: #cbd5e1; }
+
+  .result-card { min-height: 152px; display: flex; flex-direction: column; margin-bottom: 20px; }
+  .result-card:last-child { margin-bottom: 0; }
+  .result-head { display: flex; align-items: flex-start; gap: 14px; }
+  .icon-box { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 1px 2px rgba(15,23,42,0.08); }
+  .icon-box svg { width: 20px; height: 20px; color: #fff; stroke-width: 2.25; }
+  .result-meta .title { font-size: 15px; font-weight: 600; color: #0f172a; line-height: 1.2; }
+  .result-meta .formula { font-size: 12.5px; color: #64748b; margin-top: 2px; }
+
+  .result-value { margin-top: 20px; flex: 1; display: flex; align-items: flex-end; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; color: #cbd5e1; transition: color 0.25s ease; }
+  @media (min-width: 768px) { .result-value { font-size: 34px; } }
+  .result-value.filled { color: inherit; }
+
+  /* Default: all numeric results show orange (non-important so overrides can win) */
+  .result-value { color: #f97316; }
+
+  /* YOY overrides with higher specificity and !important to ensure they win */
+  .result-value[data-out*="yoy"].positive,
+  .result-value#out-yoy-val.positive,
+  [data-out*="yoy"].positive,
+  #out-yoy-val.positive {
+    color: #10b981 !important; /* green */
+  }
+  .result-value[data-out*="yoy"].negative,
+  .result-value#out-yoy-val.negative,
+  [data-out*="yoy"].negative,
+  #out-yoy-val.negative {
+    color: #ef4444 !important; /* red */
+  }
+
+  .small { font-size: 13px; color: #64748b; margin-top: 6px; }
+  .switch { display: inline-flex; align-items: center; gap: 10px; }
+
+  .footer { margin-top: 48px; padding-top: 32px; border-top: 1px solid #e2e8f0; text-align: center; color: #94a3b8; font-size: 14px; }
+
+  /* Accent colors */
+  .bg-slate-900 { background: #0f172a; }
+  .bg-emerald-500 { background: #10b981; }
+  .bg-indigo-600 { background: #4f46e5; }
+  .bg-orange-500 { background: #f97316; }
+  .border-slate-900 { border-color: #0f172a; }
+  .border-emerald-500 { border-color: #10b981; }
+  .border-indigo-600 { border-color: #4f46e5; }
+  .border-orange-500 { border-color: #f97316; }
+  .text-slate-900 { color: #0f172a; }
+  .text-emerald-500 { color: #10b981; }
+  .text-indigo-600 { color: #4f46e5; }
+  .text-orange-500 { color: #f97316; }
+
+  /* Screen-reader only */
+  .sr-only {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+    border: 0; padding: 0; margin: -1px;
+  }
+</style>
+</head>
+<body>
+
+<!-- include colouring helper -->
+<script src="yoy-coloring.js" defer></script>
+
+<div class="container">
+  <div class="badge" aria-hidden="false">
+    <svg aria-hidden="true" focusable="false"><use href="#i-chart"/></svg>
+    <span>Business Metrics</span>
+  </div>
+
+  <h1>Profit &amp; Growth Calculator</h1>
+  <p class="subtitle">Calculate cost percentage, gross profit, gross margin, and year-on-year growth. Enter your figures and results update instantly.</p>
+
+  <div class="pills" role="tablist" aria-label="Quick jump">
+    <button type="button" class="pill" data-target="cost-percentage">Cost %</button>
+    <button type="button" class="pill" data-target="gross-profit">Gross Profit</button>
+    <button type="button" class="pill" data-target="gross-margin">Gross Margin</button>
+    <button type="button" class="pill" data-target="growth-yoy">Growth YoY</button>
+  </div>
+
+  <!-- Cost Percentage (Selling Price first, then Cost) -->
+  <section id="cost-percentage" class="section">
+    <div class="section-header border-slate-900">
+      <h2>Cost Percentage</h2>
+      <p>What share of your revenue is consumed by costs.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="field">
+          <label for="cost-sell">Selling Price</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="cost-sell" name="cost-sell" type="number" inputmode="decimal" placeholder="120000" data-in="cost-sell" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="cost-total">Cost</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="cost-total" name="cost-total" type="number" inputmode="decimal" placeholder="50000" data-in="cost-total" />
+          </div>
+        </div>
+        <div class="field">
+          <label class="switch"><input id="cost-vat" type="checkbox" /> Include 5% VAT on selling price</label>
+        </div>
+      </div>
+      <div>
+        <div class="card result-card">
+          <div class="result-head">
+            <div class="icon-box bg-slate-900"></div>
+            <div class="result-meta"><div class="title">Cost Percentage</div><div class="formula">(Cost ÷ Revenue) × 100</div></div>
+          </div>
+          <div id="out-cost-pct" class="result-value" data-out="cost-pct">—</div>
+          <div id="out-cost-sell-vat" class="small" data-out="cost-sell-vat"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gross Profit (Selling Price first, then Cost) -->
+  <section id="gross-profit" class="section">
+    <div class="section-header border-emerald-500">
+      <h2>Gross Profit</h2>
+      <p>Money left after subtracting the cost of goods sold.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="field">
+          <label for="gp-sell">Selling Price</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="gp-sell" name="gp-sell" type="number" inputmode="decimal" placeholder="120000" data-in="gp-sell" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="gp-cost">Cost</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="gp-cost" name="gp-cost" type="number" inputmode="decimal" placeholder="45000" data-in="gp-cost" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card result-card">
+          <div class="result-head">
+            <div class="icon-box bg-emerald-500"></div>
+            <div class="result-meta"><div class="title">Gross Profit</div><div class="formula">Revenue − COGS</div></div>
+          </div>
+          <div id="out-gp-val" class="result-value" data-out="gp-val">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gross Margin (Selling Price first, then Cost) -->
+  <section id="gross-margin" class="section">
+    <div class="section-header border-indigo-600">
+      <h2>Gross Margin</h2>
+      <p>Gross margin as a percentage.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="field">
+          <label for="gm-sell">Selling Price</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="gm-sell" name="gm-sell" type="number" inputmode="decimal" placeholder="120000" data-in="gm-sell" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="gm-cost">Cost</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="gm-cost" name="gm-cost" type="number" inputmode="decimal" placeholder="45000" data-in="gm-cost" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card result-card">
+          <div class="result-head">
+            <div class="icon-box bg-indigo-600"></div>
+            <div class="result-meta"><div class="title">Gross Margin</div><div class="formula">(Revenue − COGS) ÷ Revenue × 100</div></div>
+          </div>
+          <div id="out-gm-pct" class="result-value" data-out="gm-pct">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- YoY Growth -->
+  <section id="growth-yoy" class="section">
+    <div class="section-header border-orange-500">
+      <h2>Year-on-Year Growth</h2>
+      <p>Compare current period to previous period.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="field">
+          <label for="yoy-current">Current Period Value</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="yoy-current" name="yoy-current" type="number" inputmode="decimal" placeholder="120000" data-in="yoy-current" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="yoy-previous">Previous Period Value</label>
+          <div class="input-wrap"><span class="prefix">AED</span><span class="divider"></span>
+            <input id="yoy-previous" name="yoy-previous" type="number" inputmode="decimal" placeholder="100000" data-in="yoy-previous" />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card result-card">
+          <div class="result-head">
+            <div class="icon-box bg-orange-500"></div>
+            <div class="result-meta"><div class="title">YoY Growth</div><div class="formula">(Current − Previous) ÷ Previous × 100</div></div>
+          </div>
+          <div id="out-yoy-val" class="result-value" data-out="yoy-val">—</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">Built with ❤️ By Brix Team</div>
+</div>
+
+<script>
+(function(){
+  // IDs to keep in sync
+  const sellIds = ['cost-sell','gp-sell','gm-sell'];
+  const costIds = ['cost-total','gp-cost','gm-cost'];
+
+  function fmt(num){
+    if (!Number.isFinite(num)) return '—';
+    if (Math.abs(num) >= 1000) return num.toLocaleString(undefined, {maximumFractionDigits: 2});
+    return Number(num.toFixed(2)).toString();
+  }
+
+  // Sync helpers
+  function syncValueFrom(sourceId, groupIds){
+    const val = document.getElementById(sourceId).value;
+    groupIds.forEach(id=>{
+      if (id === sourceId) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      // only update if different to avoid cursor jump
+      if (el.value !== val) el.value = val;
+    });
+  }
+
+  // Calculations
+  function updateCostPct(){
+    const cost = parseFloat(document.getElementById('cost-total').value) || 0;
+    let sell = parseFloat(document.getElementById('cost-sell').value) || 0;
+    if (document.getElementById('cost-vat') && document.getElementById('cost-vat').checked){
+      sell = sell * 1.05;
+      document.getElementById('out-cost-sell-vat').textContent = 'Including 5% VAT: ' + fmt(sell);
+    } else {
+      const el = document.getElementById('out-cost-sell-vat'); if (el) el.textContent = '';
+    }
+    const pct = sell ? (cost / sell) * 100 : NaN;
+    document.getElementById('out-cost-pct').textContent = Number.isFinite(pct) ? pct.toFixed(1) + '%' : '—';
+  }
+
+  function updateGrossProfit(){
+    const sell = parseFloat(document.getElementById('gp-sell').value) || 0;
+    const cost = parseFloat(document.getElementById('gp-cost').value) || 0;
+    const gp = sell - cost;
+    document.getElementById('out-gp-val').textContent = Number.isFinite(gp) ? fmt(gp) : '—';
+  }
+
+  function updateGrossMargin(){
+    const sell = parseFloat(document.getElementById('gm-sell').value) || 0;
+    const cost = parseFloat(document.getElementById('gm-cost').value) || 0;
+    const margin = sell ? ((sell - cost) / sell) * 100 : NaN;
+    document.getElementById('out-gm-pct').textContent = Number.isFinite(margin) ? margin.toFixed(1) + '%' : '—';
+  }
+
+  function updateYoY(){
+    const cur = parseFloat(document.getElementById('yoy-current').value) || 0;
+    const prev = parseFloat(document.getElementById('yoy-previous').value) || 0;
+    const out = document.getElementById('out-yoy-val');
+    if (!prev) { out.textContent = '—'; out.classList.remove('positive','negative'); return; }
+    const pct = ((cur - prev) / prev) * 100;
+    const sign = pct > 0 ? '+' : '';
+    out.textContent = sign + pct.toFixed(1) + '%';
+    out.classList.remove('positive','negative');
+    if (pct > 0) out.classList.add('positive');
+    else if (pct < 0) out.classList.add('negative');
+  }
+
+  // Wire up inputs with sync + updates
+  const mapping = {
+    'cost-sell': ()=>{ syncValueFrom('cost-sell', sellIds); updateCostPct(); updateGrossProfit(); updateGrossMargin(); },
+    'gp-sell': ()=>{ syncValueFrom('gp-sell', sellIds); updateCostPct(); updateGrossProfit(); updateGrossMargin(); },
+    'gm-sell': ()=>{ syncValueFrom('gm-sell', sellIds); updateCostPct(); updateGrossProfit(); updateGrossMargin(); },
+
+    'cost-total': ()=>{ syncValueFrom('cost-total', costIds); updateCostPct(); updateGrossProfit(); updateGrossMargin(); },
+    'gp-cost': ()=>{ syncValueFrom('gp-cost', costIds); updateCostPct(); updateGrossProfit(); updateGrossMargin(); },
+    'gm-cost': ()=>{ syncValueFrom('gm-cost', costIds); updateCostPct(); updateGrossProfit(); updateGrossMargin(); },
+
+    'cost-vat': ()=>{ updateCostPct(); updateGrossMargin(); },
+    'yoy-current': updateYoY,
+    'yoy-previous': updateYoY
+  };
+
+  Object.keys(mapping).forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input', mapping[id]);
+    el.addEventListener('change', mapping[id]);
+  });
+
+  // pills quick-jump
+  document.querySelectorAll('.pill').forEach(b => b.addEventListener('click', (e)=>{
+    const t = e.currentTarget.getAttribute('data-target');
+    const el = document.getElementById(t);
+    if (el) el.scrollIntoView({behavior:'smooth', block:'start'});
+  }));
+
+  // initial defaults: copy cost/sell values into other inputs if empty
+  window.addEventListener('load', ()=>{
+    // if gp/gm inputs empty, copy from cost inputs
+    ['gp-sell','gm-sell'].forEach(id=>{ const el=document.getElementById(id); if(el && !el.value){ el.value = document.getElementById('cost-sell').value || ''; }});
+    ['gp-cost','gm-cost'].forEach(id=>{ const el=document.getElementById(id); if(el && !el.value){ el.value = document.getElementById('cost-total').value || ''; }});
+    updateCostPct(); updateGrossProfit(); updateGrossMargin(); updateYoY();
+  });
+
+})();
+</script>
+
+</body>
+</html>
